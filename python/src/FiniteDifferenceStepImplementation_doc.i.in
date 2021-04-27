@@ -14,7 +14,18 @@ Notes
 Base class to define how finite difference steps are computed.
 Using *FiniteDifferenceStep* is equivalent to use its derived class
 :class:`~openturns.ConstantStep`. Another way to compute steps
-is through its second derived class :class:`~openturns.BlendedStep`."
+is through its second derived class :class:`~openturns.BlendedStep`.
+
+Examples
+--------
+>>> import openturns as ot
+>>> epsilon = [1e-4, 2e-4]
+>>> steps = ot.FiniteDifferenceStep(epsilon)
+>>> print(steps([2.0]*2))
+[0.0001,0.0002]
+>>> print(steps([0.0, 3.0]))
+[0.0001,0.0002]"
+
 %enddef
 %feature("docstring") OT::FiniteDifferenceStepImplementation
 OT_FiniteDifferenceStep_doc

@@ -91,7 +91,7 @@ view = viewer.View(graph)
 # The previous figure seems to indicate that the linearity hypothesis is accurate.
 
 # %%
-# Residuals can be plotted against the fitted values.
+# Residuals and standardized residuas can be plotted against the fitted values.
 
 # %%
 graph = analysis.drawResidualsVsFitted()
@@ -102,11 +102,17 @@ graph = analysis.drawScaleLocation()
 view = viewer.View(graph)
 
 # %%
+# These figures suggest a heteroscedastic distribution of the residuals (i.e., no visible dependency between the modeled output value and the residual value), which is coherent with the underlying assumption of the linear regression model.
+
+# %%
+# This hypothesis can be further validated by the QQ-plot comparing the standard results with a normal distribution:
+
+# %%
 graph = analysis.drawQQplot()
 view = viewer.View(graph)
 
 # %%
-# In this case, the two distributions are very close: there is no obvious outlier.
+# In this case, the two distributions are very close and there is no obvious outlier.
 #
 # Cook's distance measures the impact of every invidual data point on the linear regression, and can be plotted as follows:
 
@@ -118,16 +124,17 @@ view = viewer.View(graph)
 # This graph shows us the index of the points with disproportionate influence.
 #
 # One of the components of the computation of Cook's distance at a given point is that point's *leverage*.
-# High-leverage points are far from their closest neighbors, so the fitted linear regression model must pass close to them.
+# High-leverage points are far from their closest neighbors, so the fitted linear regression model will likely pass close to them.
+# As a consequence, high leverage samples are expected to present low residual values.
 
 # %%
 graph = analysis.drawResidualsVsLeverages()
 view = viewer.View(graph)
 
 # %%
-# In this case, there seem to be no obvious influential outlier characterized by large leverage and residual values, as is also shown in the figure below:
+# In this case, there seem to be no obvious influential outlier characterized by large leverage and residual values.
 #
-# Similarly, we can also plot Cook's distances as a function of the sample leverages:
+# Similarly, we can also plot Cook's distances as a function of the sample leverages. Potentially influent outliers are characterized by both large Cook's distances and leverages.
 
 # %%
 graph = analysis.drawCookVsLeverages()
