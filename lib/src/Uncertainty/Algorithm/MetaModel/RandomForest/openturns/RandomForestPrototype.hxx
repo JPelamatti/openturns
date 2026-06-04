@@ -53,7 +53,9 @@ public:
   RandomForestPrototype* clone() const override;
 
   void run() override;
-  Sample predict(Sample& inputSample);
+  Sample predict(const Sample& inputSample) const;
+  Function getRandomForestAsFunction();
+
     
 private:
 
@@ -143,6 +145,84 @@ private:
         Sample x;
         Sample y;
       };
+
+  // Helper class to evaluate the random forest
+  class RandomForestEvaluation: public EvaluationImplementation
+  {
+  public:
+    // Constructor from a GLM algorithm
+    RandomForestEvaluation(RandomForestPrototype & algorithm)
+      : EvaluationImplementation()
+      , algorithm_(algorithm)
+    {
+      // Nothing to do
+    }
+
+    RandomForestEvaluation * clone() const override
+    {
+      return new RandomForestEvaluation(*this);
+    }
+
+    // It is a simple call to the predict of the algo
+    Point operator() (const Point & point) const override
+    {
+      Sample sample(1, point);
+      const Point value(algorithm_.predict(sample)[0]);
+      return value;
+    }
+
+    // It is a simple call to the predict of the algo
+    Sample operator() (const Sample & sample) const override
+    {
+      const Sample values(algorithm_.predict(sample));
+      return values;
+    }
+
+    UnsignedInteger getInputDimension() const override
+    {
+      return algorithm_.getInputSample().getDimension();
+    }
+
+    UnsignedInteger getOutputDimension() const override
+    {
+      return algorithm_.getOutputSample().getDimension();
+    }
+
+    Description getInputDescription() const override
+    {
+      return algorithm_.getInputSample().getDescription();
+    }
+
+    Description getOutputDescription() const override
+    {
+      return algorithm_.getOutputSample().getDescription();
+    }
+
+    Description getDescription() const override
+    {
+      Description description(getInputDescription());
+      description.add(getOutputDescription());
+      return description;
+    }
+
+    String __repr__() const override
+    {
+      OSS oss;
+      // Don't print algorithm_ here as it will result in an infinite loop!
+      oss << "RandomForestEvaluation";
+      return oss;
+    }
+
+    String __str__(const String & offset = "") const override
+    {
+      // Don't print algorithm_ here as it will result in an infinite loop!
+      return OSS() << offset << __repr__();
+    }
+
+  private:
+    RandomForestPrototype & algorithm_;
+  }; // RandomForestEvaluation
+
 #endif
 };
 

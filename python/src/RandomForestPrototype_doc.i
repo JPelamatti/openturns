@@ -58,3 +58,13 @@ Returns
 -------
 outputSample : :class:`~openturns.Sample`
     Prediction."
+    
+// ---------------------------------------------------------------------
+
+%feature("docstring") OT::RandomForestPrototype::getRandomForestAsFunction
+"Returns the prediction function.
+
+Returns
+-------
+randomforestevaluation : :class:`~openturns.Function`
+    Prediction Function."

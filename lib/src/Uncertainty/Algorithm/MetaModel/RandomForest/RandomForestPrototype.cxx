@@ -20,6 +20,7 @@
  */
 
 #include "openturns/RandomForestPrototype.hxx"
+#include "openturns/MemoizeFunction.hxx"
 
 #ifdef OPENTURNS_HAVE_RANGER
 #include <Forest.h>
@@ -134,15 +135,30 @@ void RandomForestPrototype::run()
 #endif
 }
 
+Function RandomForestPrototype::getRandomForestAsFunction()
+{
+  #ifdef OPENTURNS_HAVE_RANGER
+  MemoizeFunction randomforestevaluation(RandomForestEvaluation(*this));
+  // Here we change the finite difference gradient for a non centered one in order to reduce the computational cost
+  randomforestevaluation.enableCache();
+  return randomforestevaluation;
 
-Sample RandomForestPrototype::predict(Sample& inputSample)
+  #else
+        throw NotYetImplementedException(HERE) 
+            << "Random forest requires Ranger library";
+  #endif
+}
+
+Sample RandomForestPrototype::predict(const Sample& inputSample) const
 {
 #ifdef OPENTURNS_HAVE_RANGER
 
   Sample syntheticOutputSample(inputSample.getSize(), outputSample_.getDimension());
   syntheticOutputSample.setDescription(outputSample_.getDescription());
-  inputSample.setDescription(inputSample_.getDescription());
-  auto data = std::make_unique<RandomForestPrototype::DataRanger>(inputSample, syntheticOutputSample);
+  // We create a copy of the input sample as the predict method must be const and we need to modify the sample description
+  Sample inputSampleWithCorrectDescription(inputSample);
+  inputSampleWithCorrectDescription.setDescription(inputSample_.getDescription());
+  auto data = std::make_unique<RandomForestPrototype::DataRanger>(inputSampleWithCorrectDescription, syntheticOutputSample);
 
   // Create forest
   std::shared_ptr<ranger::ForestRegression> forest(
@@ -191,12 +207,19 @@ Sample RandomForestPrototype::predict(Sample& inputSample)
       /* node_stats */ false
   );
 
+  // We make copies of LoadForest arguments as the method is not declared const
+  
+std::vector<std::vector<long unsigned int>> split_var_ids(split_var_ids_);
+std::vector<std::vector<std::vector<long unsigned int>>> child_node_ids(child_node_ids_);
+std::vector<std::vector<double>> split_values(split_values_);
+std::vector<bool> is_ordered_variable(is_ordered_variable_);
+
   forest->loadForest(
     num_trees_,
-    child_node_ids_,
-    split_var_ids_,
-    split_values_,
-    is_ordered_variable_
+    child_node_ids,
+    split_var_ids,
+    split_values,
+    is_ordered_variable
   );
 
   //LOGWARN(OSS() << "Dans predict : apres le loadForest ");
