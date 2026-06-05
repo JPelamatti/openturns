@@ -33,16 +33,8 @@ Test it:
 
 // ---------------------------------------------------------------------
 
-%feature("docstring") OT::RandomForestPrototype::train
-"Train the random forest.
-
-Parameters
-----------
-inputSample : :class:`~openturns.Sample`
-    Input sample.
-
-outputSample : :class:`~openturns.Sample`
-    Output sample."
+%feature("docstring") OT::RandomForestPrototype::run
+"Train the random forest."
 
 // ---------------------------------------------------------------------
 
