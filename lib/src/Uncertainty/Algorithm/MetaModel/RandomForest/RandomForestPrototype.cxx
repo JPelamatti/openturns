@@ -70,10 +70,13 @@ void RandomForestPrototype::run()
 {
 #ifdef OPENTURNS_HAVE_RANGER
 
-  auto data = std::make_unique<RandomForestPrototype::DataRanger>(inputSample_, outputSample_);
+  auto data = std::make_unique<RandomForestPrototype::DataRanger>(inputSample_, outputSample_, inputSample_.getDescription(), outputSample_.getDescription());
   data->setIsOrderedVariable({}); // no unordered variable
 
-  is_ordered_variable_ = data->getIsOrderedVariable();
+  std::vector<bool> is_ordered_variable = data->getIsOrderedVariable();
+  is_ordered_variable_ = PersistentCollection<UnsignedInteger>(is_ordered_variable.size());
+  std::copy(is_ordered_variable.begin(), is_ordered_variable.end(), is_ordered_variable_.begin());
+
 
   // Create forest
   std::shared_ptr<ranger::ForestRegression> forest(
@@ -124,11 +127,42 @@ void RandomForestPrototype::run()
   // Train
   forest->run(/* verbose */ false, /* compute_oob_error */ true);
 
-  child_node_ids_ = forest->getChildNodeIDs();
-  split_var_ids_ = forest->getSplitVarIDs();
-  split_values_ = forest->getSplitValues();
+  std::vector<std::vector<std::vector<long unsigned int> > > child_node_ids(forest->getChildNodeIDs());
+  std::vector<std::vector<long unsigned int> >  split_var_ids(forest->getSplitVarIDs());
+  std::vector<std::vector<double> > split_values(forest->getSplitValues());
   num_trees_ = forest->getNumTrees();
-        
+
+// We transform the training output as OT compatible objects
+
+split_var_ids_ = PersistentCollection<PersistentCollection<UnsignedInteger> >(split_var_ids.size());
+for (UnsignedInteger i = 0; i < split_var_ids.size(); ++i)
+{
+  split_var_ids_[i] = PersistentCollection<UnsignedInteger>(split_var_ids[i].size()); 
+  std::copy(split_var_ids[i].begin(), split_var_ids[i].end(), split_var_ids_[i].begin());
+}
+
+child_node_ids_ = PersistentCollection<PersistentCollection<PersistentCollection<UnsignedInteger> > >(child_node_ids.size());
+for (UnsignedInteger j = 0; j < child_node_ids.size(); ++j)
+{
+  child_node_ids_[j] = PersistentCollection<PersistentCollection<UnsignedInteger> >(child_node_ids[j].size());
+  PersistentCollection<PersistentCollection<UnsignedInteger> > buffer(child_node_ids[j].size());
+  for (UnsignedInteger i = 0; i < child_node_ids[j].size(); ++i)
+  {
+    buffer[i] = PersistentCollection<UnsignedInteger>(child_node_ids[j][i].size());
+    std::copy(child_node_ids[j][i].begin(), child_node_ids[j][i].end(), buffer[i].begin());
+  }
+  std::copy(buffer.begin(), buffer.end(), child_node_ids_[j].begin());
+}
+
+split_values_ = PersistentCollection<PersistentCollection<Scalar> >(split_values.size());
+for (UnsignedInteger i = 0; i < split_values.size(); ++i)
+{
+  split_values_[i] = PersistentCollection<Scalar>(split_values[i].size());
+  std::copy(split_values[i].begin(), split_values[i].end(), split_values_[i].begin());
+}
+
+Function metaModel(getRandomForestAsFunction());
+result_ = RandomForestResult(inputSample_, outputSample_, metaModel);
 #else
         throw NotYetImplementedException(HERE) 
             << "Random forest requires Ranger library";
@@ -154,11 +188,7 @@ Sample RandomForestPrototype::predict(const Sample& inputSample) const
 #ifdef OPENTURNS_HAVE_RANGER
 
   Sample syntheticOutputSample(inputSample.getSize(), outputSample_.getDimension());
-  syntheticOutputSample.setDescription(outputSample_.getDescription());
-  // We create a copy of the input sample as the predict method must be const and we need to modify the sample description
-  Sample inputSampleWithCorrectDescription(inputSample);
-  inputSampleWithCorrectDescription.setDescription(inputSample_.getDescription());
-  auto data = std::make_unique<RandomForestPrototype::DataRanger>(inputSampleWithCorrectDescription, syntheticOutputSample);
+  auto data = std::make_unique<RandomForestPrototype::DataRanger>(inputSample, syntheticOutputSample, inputSample_.getDescription(), outputSample_.getDescription());
 
   // Create forest
   std::shared_ptr<ranger::ForestRegression> forest(
@@ -207,12 +237,37 @@ Sample RandomForestPrototype::predict(const Sample& inputSample) const
       /* node_stats */ false
   );
 
-  // We make copies of LoadForest arguments as the method is not declared const
-  
-std::vector<std::vector<long unsigned int>> split_var_ids(split_var_ids_);
-std::vector<std::vector<std::vector<long unsigned int>>> child_node_ids(child_node_ids_);
-std::vector<std::vector<double>> split_values(split_values_);
-std::vector<bool> is_ordered_variable(is_ordered_variable_);
+// We make ranger compatible copies of LoadForest arguments as the method is not declared const
+std::vector<std::vector<long unsigned int>> split_var_ids(split_var_ids_.getSize());
+for (UnsignedInteger i = 0; i < split_var_ids_.getSize(); ++i)
+{
+  split_var_ids[i] = std::vector<long unsigned int>(split_var_ids_[i].getSize());
+  std::copy(split_var_ids_[i].begin(), split_var_ids_[i].end(), split_var_ids[i].begin());
+}
+
+std::vector<std::vector<std::vector<long unsigned int> > > child_node_ids(child_node_ids_.getSize());
+for (UnsignedInteger j = 0; j < child_node_ids_.getSize(); ++j)
+{
+  child_node_ids[j] = std::vector<std::vector<long unsigned int> >(child_node_ids_[j].getSize());
+  std::vector<std::vector<long unsigned int> > buffer(child_node_ids_[j].getSize());
+  for (UnsignedInteger i = 0; i < child_node_ids_[j].getSize(); ++i)
+  {
+    buffer[i] = std::vector<long unsigned int>(child_node_ids_[j][i].getSize());
+    std::copy(child_node_ids_[j][i].begin(), child_node_ids_[j][i].end(), buffer[i].begin());
+  }
+  std::copy(buffer.begin(), buffer.end(), child_node_ids[j].begin());
+}
+
+std::vector<std::vector<double>> split_values(split_values_.getSize());
+for (UnsignedInteger i = 0; i < split_values_.getSize(); ++i)
+{
+  split_values[i] = std::vector<double>(split_values_[i].getSize());
+  std::copy(split_values_[i].begin(), split_values_[i].end(), split_values[i].begin());
+}
+
+std::vector<bool> is_ordered_variable(is_ordered_variable_.getSize());
+std::copy(is_ordered_variable_.begin(), is_ordered_variable_.end(), is_ordered_variable.begin());
+
 
   forest->loadForest(
     num_trees_,

@@ -23,5 +23,6 @@
 #define OPENTURNS_OTRANDOMFOREST_HXX
 
 #include "openturns/RandomForestPrototype.hxx"
+#include "openturns/RandomForestResult.hxx"
 
 #endif /* OPENTURNS_OTRANDOMFOREST_HXX */

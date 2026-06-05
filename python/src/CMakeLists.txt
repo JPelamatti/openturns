@@ -508,7 +508,8 @@ ot_add_python_module(metamodel metamodel_module.i
                       LinearModelAlgorithm.i LinearModelAlgorithm_doc.i
                       LinearModelAnalysis.i LinearModelAnalysis_doc.i
                       LinearModelValidation.i LinearModelValidation_doc.i
-                      RandomForestPrototype.i RandomForestPrototype_doc.i   
+                      RandomForestPrototype.i RandomForestPrototype_doc.i 
+                      RandomForestResult.i RandomForestResult_doc.i     
                       RandomVector.i RandomVector_doc.i
                       CompositeRandomVector.i CompositeRandomVector_doc.i
                       ThresholdEvent.i ThresholdEvent_doc.i

@@ -22,6 +22,7 @@
 #define OPENTURNS_RANDOMFORESTPROTOTYPE_HXX
 
 #include "openturns/MetaModelAlgorithm.hxx"
+#include "openturns/RandomForestResult.hxx"
 #ifdef OPENTURNS_HAVE_RANGER
 #include <Forest.h>
 #include <ForestRegression.h>
@@ -58,22 +59,24 @@ public:
 
     
 private:
+  RandomForestResult result_;
 
 #ifdef OPENTURNS_HAVE_RANGER
   // convertToRangerData(const Sample& input, const Sample& output);
   // std::shared_ptr<ranger::ForestRegression> forest_ = 0;
   UnsignedInteger num_trees_;
-  std::vector<std::vector<long unsigned int>> split_var_ids_;
-  std::vector<std::vector<std::vector<long unsigned int>>> child_node_ids_;
-  std::vector<std::vector<double>> split_values_;
-  std::vector<bool> is_ordered_variable_;
+  PersistentCollection<PersistentCollection<UnsignedInteger> > split_var_ids_;
+  PersistentCollection<PersistentCollection<PersistentCollection<UnsignedInteger> > > child_node_ids_;
+  PersistentCollection<PersistentCollection<Scalar> > split_values_;
+  PersistentCollection<UnsignedInteger> is_ordered_variable_;
 
   class DataRanger
     : public ranger::Data
     {
       public:
         DataRanger() = default;
-        DataRanger(const Sample& input, const Sample& output)
+        // Avoid having to copy Samples simply to modify their Description
+        DataRanger(const Sample& input, const Sample& output, const Description& inputDescription, const Description& outputDescription)
           :ranger::Data()
           // ,num_rows(input.getSize())
           // ,num_rows_rounded(0)
@@ -91,8 +94,6 @@ private:
           num_rows = input.getSize();
           num_cols = input.getDimension();
           num_cols_no_snp = num_cols;
-          const Description inputDescription(input.getDescription());
-          const Description outputDescription(output.getDescription());
           for (size_t i = 0; i < input.getDimension(); ++i) {
               variable_names.push_back("var_" + inputDescription[i]);
           }
@@ -150,10 +151,10 @@ private:
   class RandomForestEvaluation: public EvaluationImplementation
   {
   public:
-    // Constructor from a GLM algorithm
-    RandomForestEvaluation(RandomForestPrototype & algorithm)
+    // Parameter constructor
+    RandomForestEvaluation(const RandomForestPrototype & algorithm)
       : EvaluationImplementation()
-      , algorithm_(algorithm)
+      , algorithm_(algorithm.clone())
     {
       // Nothing to do
     }
@@ -167,35 +168,35 @@ private:
     Point operator() (const Point & point) const override
     {
       Sample sample(1, point);
-      const Point value(algorithm_.predict(sample)[0]);
+      const Point value(algorithm_->predict(sample)[0]);
       return value;
     }
 
     // It is a simple call to the predict of the algo
     Sample operator() (const Sample & sample) const override
     {
-      const Sample values(algorithm_.predict(sample));
+      const Sample values(algorithm_->predict(sample));
       return values;
     }
 
     UnsignedInteger getInputDimension() const override
     {
-      return algorithm_.getInputSample().getDimension();
+      return algorithm_->getInputSample().getDimension();
     }
 
     UnsignedInteger getOutputDimension() const override
     {
-      return algorithm_.getOutputSample().getDimension();
+      return algorithm_->getOutputSample().getDimension();
     }
 
     Description getInputDescription() const override
     {
-      return algorithm_.getInputSample().getDescription();
+      return algorithm_->getInputSample().getDescription();
     }
 
     Description getOutputDescription() const override
     {
-      return algorithm_.getOutputSample().getDescription();
+      return algorithm_->getOutputSample().getDescription();
     }
 
     Description getDescription() const override
@@ -220,7 +221,7 @@ private:
     }
 
   private:
-    RandomForestPrototype & algorithm_;
+    RandomForestPrototype* algorithm_;
   }; // RandomForestEvaluation
 
 #endif
