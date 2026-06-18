@@ -1,5 +1,5 @@
 %feature("docstring") OT::RandomForestResult
-R"RAW(Result of a RandomForestAlgorithm.
+R"RAW(Result of a RandomForestRegressionAlgorithm.
 
 Parameters
 ----------

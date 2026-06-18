@@ -43,7 +43,7 @@ int main(int, char *[])
     Sample inputSample(experiment.generate());
     Sample outputSample(model(inputSample));
 
-    RandomForestPrototype rf(inputSample, outputSample);
+    RandomForestRegressionAlgorithm rf(inputSample, outputSample);
     fullprint << "Objet rf construit " << std::endl;
     rf.run();
     fullprint << "Entrainement termine " << std::endl;

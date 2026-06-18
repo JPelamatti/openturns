@@ -40,10 +40,14 @@ RandomForestResult::RandomForestResult()
 /*Parameter constructor */
 RandomForestResult::RandomForestResult(const Sample & inputSample,
                                       const Sample & outputSample,
-                                      const Function & metaModel)
+                                      const Function & metaModel,
+                                      const Scalar outOfBagError,
+                                      const Point &variableImportance)
   : MetaModelResult(inputSample, outputSample, metaModel)
-{
-  // Nothing to do
+  , outOfBagError_(outOfBagError)
+  , variableImportance_(variableImportance)
+  {
+    // Nothing to do
 }
 
 /* Virtual constructor */
@@ -58,11 +62,20 @@ void RandomForestResult::save(Advocate & adv) const
   MetaModelResult::save(adv);
 }
 
-
 /* Method load() reloads the object from the StorageManager */
 void RandomForestResult::load(Advocate & adv)
 {
   MetaModelResult::load(adv);
+}
+
+Scalar RandomForestResult::getOutOfBagError() const
+{
+  return outOfBagError_;
+}
+
+Point RandomForestResult::getVariableImportance() const
+{
+  return variableImportance_;
 }
 
 END_NAMESPACE_OPENTURNS

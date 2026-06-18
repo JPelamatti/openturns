@@ -22,7 +22,7 @@
 #ifndef OPENTURNS_OTRANDOMFOREST_HXX
 #define OPENTURNS_OTRANDOMFOREST_HXX
 
-#include "openturns/RandomForestPrototype.hxx"
+#include "openturns/RandomForestRegressionAlgorithm.hxx"
 #include "openturns/RandomForestResult.hxx"
 
 #endif /* OPENTURNS_OTRANDOMFOREST_HXX */
