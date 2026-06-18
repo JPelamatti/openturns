@@ -18,8 +18,8 @@
  *  along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef OPENTURNS_RANDOMFORESTPROTOTYPE_HXX
-#define OPENTURNS_RANDOMFORESTPROTOTYPE_HXX
+#ifndef OPENTURNS_RANDOMFORESTALGORITHM_HXX
+#define OPENTURNS_RANDOMFORESTALGORITHM_HXX
 
 #include "openturns/MetaModelAlgorithm.hxx"
 #include "openturns/RandomForestResult.hxx"
@@ -33,10 +33,10 @@
 BEGIN_NAMESPACE_OPENTURNS
 
 /**
- * @class RandomForestPrototype
+ * @class RandomForestRegressionAlgorithm
  */
 
-class OT_API RandomForestPrototype
+class OT_API RandomForestRegressionAlgorithm
   : public MetaModelAlgorithm
 {
   CLASSNAME
@@ -44,14 +44,15 @@ class OT_API RandomForestPrototype
 public:
 
   /** Default constructor */
-  RandomForestPrototype();
+  RandomForestRegressionAlgorithm();
 
   /** Parameters constructor */
-  RandomForestPrototype(const Sample & inputSample,
-                      const Sample & outputSample);
+  RandomForestRegressionAlgorithm(const Sample & inputSample,
+                      const Sample & outputSample,
+                      const UnsignedInteger importanceMode = 0);
 
   /** Virtual constructor */
-  RandomForestPrototype* clone() const override;
+  RandomForestRegressionAlgorithm* clone() const override;
 
   void run() override;
   Sample predict(const Sample& inputSample) const;
@@ -60,7 +61,7 @@ public:
     
 private:
   RandomForestResult result_;
-
+  UnsignedInteger importanceMode_;
 #ifdef OPENTURNS_HAVE_RANGER
   // convertToRangerData(const Sample& input, const Sample& output);
   // std::shared_ptr<ranger::ForestRegression> forest_ = 0;
@@ -152,7 +153,7 @@ private:
   {
   public:
     // Parameter constructor
-    RandomForestEvaluation(const RandomForestPrototype & algorithm)
+    RandomForestEvaluation(const RandomForestRegressionAlgorithm & algorithm)
       : EvaluationImplementation()
       , algorithm_(algorithm.clone())
     {
@@ -179,6 +180,7 @@ private:
       return values;
     }
 
+    // The following are probably not necessary, and override should be wrong as it is not an accessor of the parent class
     UnsignedInteger getInputDimension() const override
     {
       return algorithm_->getInputSample().getDimension();
@@ -221,7 +223,7 @@ private:
     }
 
   private:
-    RandomForestPrototype* algorithm_;
+    RandomForestRegressionAlgorithm* algorithm_;
   }; // RandomForestEvaluation
 
 #endif
@@ -229,4 +231,4 @@ private:
 
 END_NAMESPACE_OPENTURNS
 
-#endif /* OPENTURNS_RANDOMFORESTPROTOTYPE_HXX */
+#endif /* OPENTURNS_RANDOMFORESTALGORITHM_HXX */

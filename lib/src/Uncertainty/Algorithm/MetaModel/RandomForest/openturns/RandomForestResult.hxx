@@ -44,7 +44,9 @@ public:
   /** Parameter constructor */
   RandomForestResult(const Sample & inputSample,
                      const Sample & outputSample,
-                     const Function & metaModel);
+                     const Function & metaModel,
+                     const Scalar outOfBagError,
+                     const Point &variableImportance);
 
   /** Virtual constructor */
   RandomForestResult * clone() const override;
@@ -54,7 +56,14 @@ public:
 
   /** Method load() reloads the object from the StorageManager */
   void load(Advocate & adv) override;
+  
+  /** Accessor for the out of bag error */
+  Scalar getOutOfBagError() const;
+  Point getVariableImportance() const;
 
+private:
+  Scalar outOfBagError_;
+  Point variableImportance_;
 }; /* class RandomForestResult */
 
 END_NAMESPACE_OPENTURNS

@@ -1,4 +1,4 @@
-%feature("docstring") OT::RandomForestPrototype
+%feature("docstring") OT::RandomForestRegressionAlgorithm
 "First attempt at a random forest class
 
 
@@ -11,7 +11,7 @@ Examples
 Create the model:
 
 >>> import openturns as ot
->>> rf = ot.RandomForestPrototype()
+>>> rf = ot.RandomForestRegressionAlgorithm()
 >>> inputDimension = 1
 >>> model = ot.SymbolicFunction(['x'], ['x * sin(x)'])
 >>> distribution = ot.JointDistribution([ot.Uniform()] * inputDimension)
@@ -33,12 +33,12 @@ Test it:
 
 // ---------------------------------------------------------------------
 
-%feature("docstring") OT::RandomForestPrototype::run
+%feature("docstring") OT::RandomForestRegressionAlgorithm::run
 "Train the random forest."
 
 // ---------------------------------------------------------------------
 
-%feature("docstring") OT::RandomForestPrototype::predict
+%feature("docstring") OT::RandomForestRegressionAlgorithm::predict
 "Predict with the random forest.
 
 Parameters
@@ -53,7 +53,7 @@ outputSample : :class:`~openturns.Sample`
     
 // ---------------------------------------------------------------------
 
-%feature("docstring") OT::RandomForestPrototype::getRandomForestAsFunction
+%feature("docstring") OT::RandomForestRegressionAlgorithm::getRandomForestAsFunction
 "Returns the prediction function.
 
 Returns

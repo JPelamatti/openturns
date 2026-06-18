@@ -19,7 +19,7 @@
  *
  */
 
-#include "openturns/RandomForestPrototype.hxx"
+#include "openturns/RandomForestRegressionAlgorithm.hxx"
 #include "openturns/MemoizeFunction.hxx"
 
 #ifdef OPENTURNS_HAVE_RANGER
@@ -32,45 +32,48 @@
 BEGIN_NAMESPACE_OPENTURNS
 
 /**
- * @class RandomForestPrototype
+ * @class RandomForestRegressionAlgorithm
  */
 
-CLASSNAMEINIT(RandomForestPrototype)
+CLASSNAMEINIT(RandomForestRegressionAlgorithm)
 
 /* Default constructor */
-RandomForestPrototype::RandomForestPrototype()
+RandomForestRegressionAlgorithm::RandomForestRegressionAlgorithm()
   : MetaModelAlgorithm()
   , num_trees_(0)
   , child_node_ids_()
   , split_values_()
   , is_ordered_variable_()
+  , importanceMode_(0)
 {
   // Nothing to do
 }
 
-RandomForestPrototype::RandomForestPrototype(const Sample & inputSample,
-    const Sample & outputSample)
+RandomForestRegressionAlgorithm::RandomForestRegressionAlgorithm(const Sample & inputSample,
+    const Sample & outputSample,
+    const UnsignedInteger importanceMode)
   : MetaModelAlgorithm(inputSample, outputSample)
   , num_trees_(0)
   , child_node_ids_()
   , split_values_()
   , is_ordered_variable_()
+  , importanceMode_(importanceMode)
 {
   // Nothing to do
 }
 
 
 /* Virtual constructor */
-RandomForestPrototype * RandomForestPrototype::clone() const
+RandomForestRegressionAlgorithm * RandomForestRegressionAlgorithm::clone() const
 {
-  return new RandomForestPrototype(*this);
+  return new RandomForestRegressionAlgorithm(*this);
 }
 
-void RandomForestPrototype::run()
+void RandomForestRegressionAlgorithm::run()
 {
 #ifdef OPENTURNS_HAVE_RANGER
 
-  auto data = std::make_unique<RandomForestPrototype::DataRanger>(inputSample_, outputSample_, inputSample_.getDescription(), outputSample_.getDescription());
+  auto data = std::make_unique<RandomForestRegressionAlgorithm::DataRanger>(inputSample_, outputSample_, inputSample_.getDescription(), outputSample_.getDescription());
   data->setIsOrderedVariable({}); // no unordered variable
 
   std::vector<bool> is_ordered_variable = data->getIsOrderedVariable();
@@ -96,7 +99,7 @@ void RandomForestPrototype::run()
       /* verbose_out */ &std::cout,
       /* seed */ 42,
       /* num_threads */ 4,
-      /* importance_mode */ ranger::IMP_NONE,
+      /* importance_mode */ static_cast<ranger::ImportanceMode>(importanceMode_),
       /* min_node_size */ zero_uint_vector, // {0} = auto-select
       /* min_bucket */ zero_uint_vector, // {0} = auto-select
       /* split_select_weights */ empty_sample, // {} = desactivation
@@ -131,7 +134,7 @@ void RandomForestPrototype::run()
   std::vector<std::vector<long unsigned int> >  split_var_ids(forest->getSplitVarIDs());
   std::vector<std::vector<double> > split_values(forest->getSplitValues());
   num_trees_ = forest->getNumTrees();
-
+  Scalar outOfBagError(forest->getOverallPredictionError());
 // We transform the training output as OT compatible objects
 
 split_var_ids_ = PersistentCollection<PersistentCollection<UnsignedInteger> >(split_var_ids.size());
@@ -162,14 +165,24 @@ for (UnsignedInteger i = 0; i < split_values.size(); ++i)
 }
 
 Function metaModel(getRandomForestAsFunction());
-result_ = RandomForestResult(inputSample_, outputSample_, metaModel);
+Point variableImportance(0);
+if (importanceMode_!=0)
+{
+  std::vector<double> rangerVariableImportance(forest->getVariableImportance());
+  for (UnsignedInteger i = 0; i < rangerVariableImportance.size(); ++i)
+  {
+    variableImportance.add(rangerVariableImportance[i]);
+  }
+}
+
+result_ = RandomForestResult(inputSample_, outputSample_, metaModel, outOfBagError, variableImportance);
 #else
         throw NotYetImplementedException(HERE) 
             << "Random forest requires Ranger library";
 #endif
 }
 
-Function RandomForestPrototype::getRandomForestAsFunction()
+Function RandomForestRegressionAlgorithm::getRandomForestAsFunction()
 {
   #ifdef OPENTURNS_HAVE_RANGER
   MemoizeFunction randomforestevaluation(RandomForestEvaluation(*this));
@@ -183,12 +196,12 @@ Function RandomForestPrototype::getRandomForestAsFunction()
   #endif
 }
 
-Sample RandomForestPrototype::predict(const Sample& inputSample) const
+Sample RandomForestRegressionAlgorithm::predict(const Sample& inputSample) const
 {
 #ifdef OPENTURNS_HAVE_RANGER
 
   Sample syntheticOutputSample(inputSample.getSize(), outputSample_.getDimension());
-  auto data = std::make_unique<RandomForestPrototype::DataRanger>(inputSample, syntheticOutputSample, inputSample_.getDescription(), outputSample_.getDescription());
+  auto data = std::make_unique<RandomForestRegressionAlgorithm::DataRanger>(inputSample, syntheticOutputSample, inputSample_.getDescription(), outputSample_.getDescription());
 
   // Create forest
   std::shared_ptr<ranger::ForestRegression> forest(
