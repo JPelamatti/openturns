@@ -18,8 +18,8 @@
  *  along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef OPENTURNS_RANDOMFORESTRESULT_HXX
-#define OPENTURNS_RANDOMFORESTRESULT_HXX
+#ifndef OPENTURNS_RANDOMFORESTREGRESSIONRESULT_HXX
+#define OPENTURNS_RANDOMFORESTREGRESSIONRESULT_HXX
 
 #include "openturns/MetaModelResult.hxx"
 
@@ -27,29 +27,29 @@
 BEGIN_NAMESPACE_OPENTURNS
 
 /**
- * @class RandomForestResult
+ * @class RandomForestRegressionResult
  *
  * The result of a linear model evaluation
  */
 
-class OT_API RandomForestResult
+class OT_API RandomForestRegressionResult
   : public MetaModelResult
 {
   CLASSNAME
 
 public:
   /** Default constructor */
-  RandomForestResult();
+  RandomForestRegressionResult();
 
   /** Parameter constructor */
-  RandomForestResult(const Sample & inputSample,
+  RandomForestRegressionResult(const Sample & inputSample,
                      const Sample & outputSample,
                      const Function & metaModel,
                      const Scalar outOfBagError,
                      const Point &variableImportance);
 
   /** Virtual constructor */
-  RandomForestResult * clone() const override;
+  RandomForestRegressionResult * clone() const override;
 
   /** Method save() stores the object through the StorageManager */
   void save(Advocate & adv) const override;
@@ -64,8 +64,8 @@ public:
 private:
   Scalar outOfBagError_;
   Point variableImportance_;
-}; /* class RandomForestResult */
+}; /* class RandomForestRegressionResult */
 
 END_NAMESPACE_OPENTURNS
 
-#endif /* OPENTURNS_RANDOMFORESTRESULT_HXX */
+#endif /* OPENTURNS_RANDOMFORESTREGRESSIONRESULT_HXX */

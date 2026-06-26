@@ -23,6 +23,6 @@
 #define OPENTURNS_OTRANDOMFOREST_HXX
 
 #include "openturns/RandomForestRegressionAlgorithm.hxx"
-#include "openturns/RandomForestResult.hxx"
+#include "openturns/RandomForestRegressionResult.hxx"
 
 #endif /* OPENTURNS_OTRANDOMFOREST_HXX */

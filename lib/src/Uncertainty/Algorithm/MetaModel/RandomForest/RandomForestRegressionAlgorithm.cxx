@@ -40,7 +40,11 @@ CLASSNAMEINIT(RandomForestRegressionAlgorithm)
 /* Default constructor */
 RandomForestRegressionAlgorithm::RandomForestRegressionAlgorithm()
   : MetaModelAlgorithm()
-  , num_trees_(0)
+  , num_trees_(500)
+  , min_node_size_({0})
+  , min_bucket_({0})
+  , max_depth_(0)
+  , mtry_(0)
   , child_node_ids_()
   , split_values_()
   , is_ordered_variable_()
@@ -51,9 +55,18 @@ RandomForestRegressionAlgorithm::RandomForestRegressionAlgorithm()
 
 RandomForestRegressionAlgorithm::RandomForestRegressionAlgorithm(const Sample & inputSample,
     const Sample & outputSample,
-    const UnsignedInteger importanceMode)
+    const UnsignedInteger importanceMode,
+    const UnsignedInteger num_trees,
+    const UnsignedInteger min_node_size,
+    const UnsignedInteger min_bucket,
+    const UnsignedInteger max_depth,
+    const UnsignedInteger mtry)
   : MetaModelAlgorithm(inputSample, outputSample)
-  , num_trees_(0)
+  , num_trees_(num_trees)
+  , min_node_size_({static_cast<unsigned int>(min_node_size)})
+  , min_bucket_({static_cast<unsigned int>(min_bucket)})
+  , max_depth_(max_depth)
+  , mtry_(mtry)
   , child_node_ids_()
   , split_values_()
   , is_ordered_variable_()
@@ -95,13 +108,13 @@ void RandomForestRegressionAlgorithm::run()
   forest->initR(
       std::move(data),
       /* mtry */ 0,  // 0 = auto-select
-      /* num_trees */ 500,
+      /* num_trees */ num_trees_,
       /* verbose_out */ &std::cout,
       /* seed */ 42,
       /* num_threads */ 4,
       /* importance_mode */ static_cast<ranger::ImportanceMode>(importanceMode_),
-      /* min_node_size */ zero_uint_vector, // {0} = auto-select
-      /* min_bucket */ zero_uint_vector, // {0} = auto-select
+      /* min_node_size */ min_node_size_, // {0} = auto-select
+      /* min_bucket */ min_bucket_, // {0} = auto-select
       /* split_select_weights */ empty_sample, // {} = desactivation
       /* always_split_variable_names */ {},
       /* prediction_mode */ false,
@@ -121,7 +134,7 @@ void RandomForestRegressionAlgorithm::run()
       /* prediction_type */ ranger::RESPONSE,
       /* num_random_splits */ 1, // sans importance
       /* order_snps */ false, // sans importance
-      /* max_depth */ 0, // no maximum depth
+      /* max_depth */ max_depth_, // no maximum depth
       /* regularization_factor */ {}, // no regularization
       /* regularization_usedepth */ false, // inutile sans regularisation
       /* node_stats */ false
@@ -175,7 +188,7 @@ if (importanceMode_!=0)
   }
 }
 
-result_ = RandomForestResult(inputSample_, outputSample_, metaModel, outOfBagError, variableImportance);
+result_ = RandomForestRegressionResult(inputSample_, outputSample_, metaModel, outOfBagError, variableImportance);
 #else
         throw NotYetImplementedException(HERE) 
             << "Random forest requires Ranger library";

@@ -18,11 +18,11 @@
  *  along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef OPENTURNS_RANDOMFORESTALGORITHM_HXX
-#define OPENTURNS_RANDOMFORESTALGORITHM_HXX
+#ifndef OPENTURNS_RANDOMFORESTREGRESSIONALGORITHM_HXX
+#define OPENTURNS_RANDOMFORESTREGRESSIONALGORITHM_HXX
 
 #include "openturns/MetaModelAlgorithm.hxx"
-#include "openturns/RandomForestResult.hxx"
+#include "openturns/RandomForestRegressionResult.hxx"
 #ifdef OPENTURNS_HAVE_RANGER
 #include <Forest.h>
 #include <ForestRegression.h>
@@ -49,7 +49,12 @@ public:
   /** Parameters constructor */
   RandomForestRegressionAlgorithm(const Sample & inputSample,
                       const Sample & outputSample,
-                      const UnsignedInteger importanceMode = 0);
+                      const UnsignedInteger importanceMode = 0,
+                      const UnsignedInteger num_trees = 500,
+                      const UnsignedInteger min_node_size = 0,
+                      const UnsignedInteger min_bucket = 0,
+                      const UnsignedInteger max_depth = 0,
+                      const UnsignedInteger mtry = 0 );
 
   /** Virtual constructor */
   RandomForestRegressionAlgorithm* clone() const override;
@@ -60,15 +65,19 @@ public:
 
     
 private:
-  RandomForestResult result_;
-  UnsignedInteger importanceMode_;
 #ifdef OPENTURNS_HAVE_RANGER
   // convertToRangerData(const Sample& input, const Sample& output);
   // std::shared_ptr<ranger::ForestRegression> forest_ = 0;
+  RandomForestRegressionResult result_;
+  std::vector<uint> min_node_size_;
+  std::vector<uint> min_bucket_;
+  UnsignedInteger max_depth_;
+  UnsignedInteger mtry_;
+  UnsignedInteger importanceMode_;
   UnsignedInteger num_trees_;
-  PersistentCollection<PersistentCollection<UnsignedInteger> > split_var_ids_;
-  PersistentCollection<PersistentCollection<PersistentCollection<UnsignedInteger> > > child_node_ids_;
-  PersistentCollection<PersistentCollection<Scalar> > split_values_;
+  PersistentCollection<PersistentCollection<UnsignedInteger>> split_var_ids_;
+  PersistentCollection<PersistentCollection<PersistentCollection<UnsignedInteger>>> child_node_ids_;
+  PersistentCollection<PersistentCollection<Scalar>> split_values_;
   PersistentCollection<UnsignedInteger> is_ordered_variable_;
 
   class DataRanger
@@ -231,4 +240,4 @@ private:
 
 END_NAMESPACE_OPENTURNS
 
-#endif /* OPENTURNS_RANDOMFORESTALGORITHM_HXX */
+#endif /* OPENTURNS_RANDOMFORESTREGRESSIONALGORITHM_HXX */
