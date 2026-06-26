@@ -18,7 +18,7 @@
  *  along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "openturns/RandomForestResult.hxx"
+#include "openturns/RandomForestRegressionResult.hxx"
 #include "openturns/PersistentObjectFactory.hxx"
 #include "openturns/OSS.hxx"
 #include "openturns/MatrixImplementation.hxx"
@@ -27,18 +27,18 @@
 
 BEGIN_NAMESPACE_OPENTURNS
 
-CLASSNAMEINIT(RandomForestResult)
-static const Factory<RandomForestResult> Factory_RandomForestResult;
+CLASSNAMEINIT(RandomForestRegressionResult)
+static const Factory<RandomForestRegressionResult> Factory_RandomForestRegressionResult;
 
 /* Default constructor */
-RandomForestResult::RandomForestResult()
+RandomForestRegressionResult::RandomForestRegressionResult()
   : MetaModelResult()
 {
   // Nothing to do
 }
 
 /*Parameter constructor */
-RandomForestResult::RandomForestResult(const Sample & inputSample,
+RandomForestRegressionResult::RandomForestRegressionResult(const Sample & inputSample,
                                       const Sample & outputSample,
                                       const Function & metaModel,
                                       const Scalar outOfBagError,
@@ -51,29 +51,29 @@ RandomForestResult::RandomForestResult(const Sample & inputSample,
 }
 
 /* Virtual constructor */
-RandomForestResult * RandomForestResult::clone() const
+RandomForestRegressionResult * RandomForestRegressionResult::clone() const
 {
-  return new RandomForestResult(*this);
+  return new RandomForestRegressionResult(*this);
 }
 
 /* Method save() stores the object through the StorageManager */
-void RandomForestResult::save(Advocate & adv) const
+void RandomForestRegressionResult::save(Advocate & adv) const
 {
   MetaModelResult::save(adv);
 }
 
 /* Method load() reloads the object from the StorageManager */
-void RandomForestResult::load(Advocate & adv)
+void RandomForestRegressionResult::load(Advocate & adv)
 {
   MetaModelResult::load(adv);
 }
 
-Scalar RandomForestResult::getOutOfBagError() const
+Scalar RandomForestRegressionResult::getOutOfBagError() const
 {
   return outOfBagError_;
 }
 
-Point RandomForestResult::getVariableImportance() const
+Point RandomForestRegressionResult::getVariableImportance() const
 {
   return variableImportance_;
 }

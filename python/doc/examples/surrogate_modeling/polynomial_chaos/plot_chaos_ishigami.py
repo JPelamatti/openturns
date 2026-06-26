@@ -134,7 +134,7 @@ metamodel = chaosResult.getMetaModel()
 # %%
 # Random forest
 
-rf = ot.RandomForestPrototype(inputTrain, outputTrain)
+rf = ot.RandomForestRegressionAlgorithm(inputTrain, outputTrain)
 rf.run()
 
 # %%
