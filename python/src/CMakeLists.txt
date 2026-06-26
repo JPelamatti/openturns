@@ -510,6 +510,8 @@ ot_add_python_module(metamodel metamodel_module.i
                       LinearModelValidation.i LinearModelValidation_doc.i
                       RandomForestRegressionAlgorithm.i RandomForestRegressionAlgorithm_doc.i 
                       RandomForestRegressionResult.i RandomForestRegressionResult_doc.i
+                      RandomForestClassificationAlgorithm.i RandomForestClassificationAlgorithm_doc.i
+                      RandomForestClassificationResult.i RandomForestClassificationResult_doc.i
                       ClassificationRandomForestAlgorithm.i ClassificationRandomForestAlgorithm_doc.i
                       ClassificationRandomForestResult.i ClassificationRandomForestResult_doc.i
                       RandomVector.i RandomVector_doc.i
