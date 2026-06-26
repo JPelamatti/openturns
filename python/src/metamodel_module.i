@@ -70,6 +70,9 @@
 %include LinearModelAlgorithm.i
 %include LinearModelAnalysis.i
 %include RandomForestRegressionAlgorithm.i
+%include RandomForestRegressionResult.i
+%include RandomForestClassificationAlgorithm.i
+%include RandomForestClassificationResult.i
 %include ClassificationRandomForestAlgorithm.i
 %include ClassificationRandomForestResult.i
 

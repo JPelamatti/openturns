@@ -1,7 +1,7 @@
 // SWIG file RandomForestRegressionResult.i
 
 %{
-#include "openturns/RanndomForestResult.hxx"
+#include "openturns/RandomForestRegressionResult.hxx"
 %}
 
 %include RandomForestRegressionResult_doc.i

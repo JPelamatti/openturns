@@ -178,8 +178,7 @@ private:
     Point operator() (const Point & point) const override
     {
       Sample sample(1, point);
-      const Point value(algorithm_->predict(sample)[0]);
-      return value;
+      return algorithm_->predict(sample)[0];
     }
 
     // It is a simple call to the predict of the algo

@@ -1,3 +1,5 @@
+# %%
+
 import openturns as ot
 from matplotlib import pyplot as plt
 import openturns.viewer as otv
@@ -34,7 +36,7 @@ axis.set_xlim(auto=True)
 otv.View(graph, figure=fig, axes=[axis], add_legend=False)
 
 # %%
-rf = ot.ClassificationRandomForestAlgorithm(
+rf = ot.RandomForestClassificationAlgorithm(
     data, [[classes[i]] for i in range(data.getSize())]
 )
 # %%

@@ -497,14 +497,13 @@ Sample ClassificationRandomForestAlgorithm::predictAllTrees(
   // With predict_all=true, ForestClassification stores one prediction block
   // per tree. Layout: getPredictions()[tree][obs][0] = class label (double)
   // predicted by that tree for that observation.
-  const std::vector<std::vector<std::vector<double>>> & allPreds = forest->getPredictions();
+  const std::vector<std::vector<double>> & allPreds = forest->getPredictions()[0];
 
   const UnsignedInteger n         = inputSample.getSize();
-  const UnsignedInteger num_trees = allPreds.size(); // == num_trees_
 
   // Build description: "tree_t" for each tree column
-  Description desc(num_trees);
-  for (UnsignedInteger t = 0; t < num_trees; ++t)
+  Description desc(num_trees_);
+  for (UnsignedInteger t = 0; t < num_trees_; ++t)
   {
     OSS oss;
     oss << "tree_" << t;
@@ -512,12 +511,12 @@ Sample ClassificationRandomForestAlgorithm::predictAllTrees(
   }
 
   // Result shape: (n × num_trees), each cell is a numeric class label
-  Sample result(n, num_trees);
+  Sample result(n, num_trees_);
   result.setDescription(desc);
 
-  for (UnsignedInteger t = 0; t < num_trees; ++t)
+  for (UnsignedInteger t = 0; t < num_trees_; ++t)
     for (UnsignedInteger i = 0; i < n; ++i)
-      result(i, t) = allPreds[t][i][0];
+      result(i, t) = allPreds[i][t];
 
   return result;
 
