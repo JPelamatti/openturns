@@ -24,5 +24,7 @@
 
 #include "openturns/RandomForestRegressionAlgorithm.hxx"
 #include "openturns/RandomForestRegressionResult.hxx"
+#include "openturns/ClassificationRandomForestAlgorithm.hxx"
+#include "openturns/ClassificationRandomForestResult.hxx"
 
 #endif /* OPENTURNS_OTRANDOMFOREST_HXX */
