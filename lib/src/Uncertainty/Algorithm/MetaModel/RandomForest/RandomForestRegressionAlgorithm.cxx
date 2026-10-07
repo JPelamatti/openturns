@@ -231,7 +231,7 @@ Sample RandomForestRegressionAlgorithm::predict(const Sample& inputSample) const
   forest->initR(
       std::move(data),
       /* mtry */ 0,  // 0 = auto-select
-      /* num_trees */ 500,
+      /* num_trees */ num_trees_,
       /* verbose_out */ &std::cout,
       /* seed */ 42,
       /* num_threads */ 1,

@@ -154,7 +154,9 @@ void RandomForestClassificationAlgorithm::run() {
         PersistentCollection<UnsignedInteger>(split_var_ids[i].size());
     std::copy(split_var_ids[i].begin(), split_var_ids[i].end(),
               split_var_ids_[i].begin());
-                std::vector<std::vector<std::vector<long unsigned int>>> child_node_ids(
+  }
+
+  std::vector<std::vector<std::vector<long unsigned int>>> child_node_ids(
       forest->getChildNodeIDs());
   child_node_ids_ = PersistentCollection<PersistentCollection<PersistentCollection<UnsignedInteger>>>(
           child_node_ids.size());
@@ -168,7 +170,7 @@ void RandomForestClassificationAlgorithm::run() {
     }
       child_node_ids_[j] = buffer;
   }
-  }
+
 
   std::vector<std::vector<double>> split_values(forest->getSplitValues());
   split_values_ =
@@ -249,7 +251,7 @@ Sample RandomForestClassificationAlgorithm::predict(
   forest->initR(
       std::move(data),
       /* mtry */ 0,  // 0 = auto-select
-      /* num_trees */ 500,
+      /* num_trees */ num_trees_,
       /* verbose_out */ &std::cout,
       /* seed */ 42,
       /* num_threads */ 1,
