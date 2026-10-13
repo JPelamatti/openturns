@@ -60,3 +60,13 @@ Returns
 -------
 randomforestevaluation : :class:`~openturns.Function`
     Prediction Function."
+    
+// ---------------------------------------------------------------------
+
+%feature("docstring") OT::RandomForestClassificationAlgorithm::getResult
+"Accessor to the result of the algorithm.
+
+Returns
+-------
+result : :class:`~openturns.RandomForestClassificationResult`
+    All the results of the algorithm."

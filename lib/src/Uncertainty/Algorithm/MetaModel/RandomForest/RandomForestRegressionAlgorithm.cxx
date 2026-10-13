@@ -107,7 +107,7 @@ void RandomForestRegressionAlgorithm::run()
   std::vector<double> sample_fraction = {1.0}; // valeur par defaut en cas de remplacement
   forest->initR(
       std::move(data),
-      /* mtry */ 0,  // 0 = auto-select
+      /* mtry */ mtry_,  // 0 = auto-select
       /* num_trees */ num_trees_,
       /* verbose_out */ &std::cout,
       /* seed */ 42,
@@ -195,6 +195,19 @@ result_ = RandomForestRegressionResult(inputSample_, outputSample_, metaModel, o
 #endif
 }
 
+
+RandomForestRegressionResult RandomForestRegressionAlgorithm::getResult() const {
+  #ifdef OPENTURNS_HAVE_RANGER
+
+      return result_;
+
+  #else
+        throw NotYetImplementedException(HERE) 
+            << "Random forest requires Ranger library";
+  #endif
+}
+
+
 Function RandomForestRegressionAlgorithm::getRandomForestAsFunction()
 {
   #ifdef OPENTURNS_HAVE_RANGER
@@ -230,7 +243,7 @@ Sample RandomForestRegressionAlgorithm::predict(const Sample& inputSample) const
 
   forest->initR(
       std::move(data),
-      /* mtry */ 0,  // 0 = auto-select
+      /* mtry */ mtry_,  // 0 = auto-select
       /* num_trees */ num_trees_,
       /* verbose_out */ &std::cout,
       /* seed */ 42,

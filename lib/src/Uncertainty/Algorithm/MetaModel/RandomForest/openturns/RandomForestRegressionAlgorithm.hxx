@@ -32,6 +32,8 @@
 
 BEGIN_NAMESPACE_OPENTURNS
 
+class RandomForestRegressionResult;
+
 /**
  * @class RandomForestRegressionAlgorithm
  */
@@ -62,7 +64,7 @@ public:
   void run() override;
   Sample predict(const Sample& inputSample) const;
   Function getRandomForestAsFunction();
-
+  RandomForestRegressionResult getResult() const;
     
 private:
 #ifdef OPENTURNS_HAVE_RANGER

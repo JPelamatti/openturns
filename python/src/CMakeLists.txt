@@ -513,8 +513,8 @@ ot_add_python_module(metamodel metamodel_module.i
                       RandomForestRegressionResult.i RandomForestRegressionResult_doc.i
                       RandomForestClassificationAlgorithm.i RandomForestClassificationAlgorithm_doc.i
                       RandomForestClassificationResult.i RandomForestClassificationResult_doc.i
-                      ClassificationRandomForestAlgorithm.i ClassificationRandomForestAlgorithm_doc.i
-                      ClassificationRandomForestResult.i ClassificationRandomForestResult_doc.i
+                      RandomForestProbabilityAlgorithm.i RandomForestProbabilityAlgorithm_doc.i
+                      RandomForestProbabilityResult.i RandomForestProbabilityResult_doc.i
                       RandomVector.i RandomVector_doc.i
                       CompositeRandomVector.i CompositeRandomVector_doc.i
                       ThresholdEvent.i ThresholdEvent_doc.i

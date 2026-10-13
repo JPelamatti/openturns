@@ -22,11 +22,11 @@
 #ifndef OPENTURNS_OTRANDOMFOREST_HXX
 #define OPENTURNS_OTRANDOMFOREST_HXX
 
-#include "openturns/RandomForestRegressionAlgorithm.hxx"
 #include "openturns/RandomForestRegressionResult.hxx"
-#include "openturns/RandomForestClassificationAlgorithm.hxx"
+#include "openturns/RandomForestRegressionAlgorithm.hxx"
 #include "openturns/RandomForestClassificationResult.hxx"
-#include "openturns/ClassificationRandomForestAlgorithm.hxx"
-#include "openturns/ClassificationRandomForestResult.hxx"
+#include "openturns/RandomForestClassificationAlgorithm.hxx"
+#include "openturns/RandomForestProbabilityResult.hxx"
+#include "openturns/RandomForestProbabilityAlgorithm.hxx"
 
 #endif /* OPENTURNS_OTRANDOMFOREST_HXX */

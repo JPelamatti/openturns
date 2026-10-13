@@ -32,6 +32,8 @@
 
 BEGIN_NAMESPACE_OPENTURNS
 
+class RandomForestClassificationResult;
+
 /**
  * @class RandomForestClassificationAlgorithm
  */
@@ -62,6 +64,7 @@ class OT_API RandomForestClassificationAlgorithm : public MetaModelAlgorithm {
 
   Function getRandomForestAsFunction();
   Point getClassValues() const;
+  RandomForestClassificationResult getResult() const;
 
 
  private:

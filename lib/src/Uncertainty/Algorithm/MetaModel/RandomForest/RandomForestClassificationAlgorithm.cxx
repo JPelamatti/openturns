@@ -109,7 +109,7 @@ void RandomForestClassificationAlgorithm::run() {
       1.0};  // valeur par defaut en cas de remplacement
   forest->initR(
       std::move(data),
-      /* mtry */ 0,  // 0 = auto-select
+      /* mtry */ mtry_,  // 0 = auto-select
       /* num_trees */ num_trees_,
       /* verbose_out */ &std::cout,
       /* seed */ 42,
@@ -201,6 +201,18 @@ void RandomForestClassificationAlgorithm::run() {
 #endif
 }
 
+RandomForestClassificationResult RandomForestClassificationAlgorithm::getResult() const {
+  #ifdef OPENTURNS_HAVE_RANGER
+
+      return result_;
+
+  #else
+        throw NotYetImplementedException(HERE) 
+            << "Random forest requires Ranger library";
+  #endif
+}
+
+
 Function RandomForestClassificationAlgorithm::getRandomForestAsFunction() {
 #ifdef OPENTURNS_HAVE_RANGER
   MemoizeFunction randomforestevaluation(RandomForestEvaluation(*this));
@@ -250,7 +262,7 @@ Sample RandomForestClassificationAlgorithm::predict(
 
   forest->initR(
       std::move(data),
-      /* mtry */ 0,  // 0 = auto-select
+      /* mtry */ mtry_,  // 0 = auto-select
       /* num_trees */ num_trees_,
       /* verbose_out */ &std::cout,
       /* seed */ 42,

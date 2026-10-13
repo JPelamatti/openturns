@@ -22,6 +22,7 @@
 #define OPENTURNS_RANDOMFORESTREGRESSIONRESULT_HXX
 
 #include "openturns/MetaModelResult.hxx"
+#include "openturns/Point.hxx"
 
 
 BEGIN_NAMESPACE_OPENTURNS
