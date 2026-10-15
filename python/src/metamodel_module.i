@@ -73,9 +73,6 @@
 %include RandomForestRegressionResult.i
 %include RandomForestClassificationAlgorithm.i
 %include RandomForestClassificationResult.i
-%include RandomForestProbabilityAlgorithm.i
-%include RandomForestProbabilityResult.i
-
 
 /* Uncertainty/Model */
 %include RandomVector.i
